@@ -1,6 +1,6 @@
 import heapq
 import sys
-sys.path.append('..')
+
 import npuzzle
 
 def gbfs(init_state):
@@ -52,11 +52,29 @@ def find_value(h, state):
     return None
 
 if __name__ == '__main__':
-    init_state = npuzzle.make_puzzle()
-    print("Init   :", init_state.index)
-    print("Answer :", init_state.answer)
+    #init_state = npuzzle.make_puzzle_shake(3, 100)
+    init_state = npuzzle.make_puzzle(4)
+    print("Init    :")
+    npuzzle.State.print_state(init_state.index)
+    print()
 
     time, route = astar(init_state)
-    print("Time:", time)
-    print("Length:", len(route))
-    print("Route:", route)
+    print("Changed :")
+    npuzzle.State.print_state(init_state.answer)
+    print()
+
+    print("Time    :", time)
+    print("Length  :", len(route))
+    print("Route   :")
+    print()
+
+    print("   |  0  1  2  3  4  5  6  7  8  9 ")
+    print("-----------------------------------")
+    for i, r in enumerate(route):
+        if i%10 == 0:
+            print('{:2} | '.format(i), end=' ')
+        print(r, end='  ')
+
+        if i%10 == 9:
+            print()
+    print()

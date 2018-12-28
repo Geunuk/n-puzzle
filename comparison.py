@@ -22,15 +22,19 @@ def compare_algorithm(N):
     #with open(file_name, 'rb') as f:
     #    init_state = pickle.load(f)
    
-    init_state = npuzzle.make_puzzle_parity(N)
+    init_state = npuzzle.make_puzzle(N)
     print("N      :", init_state.N)
     print("Init   :", init_state.index)
     print("Answer :", init_state.answer)
 
 
-    algorithm_list = [astar, bfs, ids, dfs] 
-    for algorithm in algorithm_list:
-        calculate_and_print(algorithm, init_state)
+    fun_list = [astar, bfs, ids, dfs]
+    result = {}
+    for fun in algorithm_list:
+        time, route = fun(init_state)
+        result[fun] = (time, route)
+
+        #calculate_and_print(algorithm, init_state)
 
 if __name__ == "__main__":
     #file_name = "input_1.dat" 

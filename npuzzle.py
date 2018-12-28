@@ -4,7 +4,7 @@ class State():
     def __init__(self, N, index, prev=None, way=None, depth=0):
         self.N = N
         self.puzzle_size = N**2
-        self.answer = tuple(range(N**2))
+        self.answer = tuple([str(x) for x in range(1, N**2)]+['X'])
         self.index = index
         self.prev = prev
         self.way = way
@@ -20,7 +20,7 @@ class State():
         return self.index == self.answer
 
     def next_state(self):
-        pos = self.index.index(0)
+        pos = self.index.index('X')
         result = []
         for new_pos, way in State.next_pos(self.N, pos):
             new_idx = list(self.index[:])
@@ -44,12 +44,22 @@ class State():
     def backtrace(self):
         result = []
         tmp_node = self
-        #while tmp_node.prev != None:
         while tmp_node.prev:
             result.append(tmp_node.way)
             tmp_node = tmp_node.prev
         result.reverse()
         return result
+
+    @staticmethod
+    def print_state(index):
+        N = int(len(index)**0.5)
+        for i in range(N):
+            print(' --'*N + ' ')
+            line = '|'.join(["{:^2}".format(x) for x in index[i*N:(i+1)*N]])
+            line = '|' + line
+            line += '|'   
+            print(line)
+        print(' --'*N + ' ')
 
 def manhattan_dist(i1, i2, N):
     a, b = i1//N, i1%N
@@ -58,19 +68,20 @@ def manhattan_dist(i1, i2, N):
 
 def total_manhattan_dist(s1, s2):
     result = 0
-
+    
     for s1_idx in range(s1.puzzle_size):
         s1_val = s1.index[s1_idx]
-        s2_idx = s2.index.index(s1_val)
-        result += manhattan_dist(s1_idx, s2_idx, s1.N)
+        if s1_val != 'X':
+            s2_idx = s2.index.index(s1_val)
+            result += manhattan_dist(s1_idx, s2_idx, s1.N)
     return result
 
-def parity_of_permutation(s1, s2):
-    s1_idx = s1.index
-    s2_idx = s2.index
+def number_of_cycles(s1, s2):
+    s1 = s1
+    s2 = s2
 
     cnt = 0
-    cnt_list = list(range(s1.puzzle_size)) # remaining index of s1
+    cnt_list = list(range(len(s1))) # remaining index of s1
     new_cycle_flag = True
     total_cycle = []
 
@@ -80,67 +91,55 @@ def parity_of_permutation(s1, s2):
             total_cycle.append(cycle)
 
         cnt_list.pop(cnt_list.index(cnt))
-        cycle.add(s1_idx[cnt])
+        cycle.add(s1[cnt])
 
-        if s2_idx[cnt] in cycle:
+        if s2[cnt] in cycle:
             if cnt_list:
                 cnt = cnt_list[0]
             new_cycle_flag = True
         else:    
             if new_cycle_flag:
                 new_cycle_flag = False
-            cnt = s1_idx.index(s2_idx[cnt])
+            cnt = s1.index(s2[cnt])
 
-    return len(total_cycle)%2
-
-def parity_of_taxicab_dist(s1, s2):
-    s1_idx = s1.index.index(0)
-    s2_idx = s2.index.index(0)
-    return manhattan_dist(s1_idx, s2_idx, s1.N)%2
+    return len(total_cycle)
 
 def total_parity(s1, s2):
-    return (parity_of_permutation(s1,s2) + parity_of_taxicab_dist(s1,s2))%2
-
-def make_puzzle():
-    """Get the number of shakes from keyboard.
+    N = int(len(s1)**0.5)
+    s1_idx = s1.index('X')
+    s2_idx = s2.index('X')
     
-    Move puzzle at state [0,1,...,PUZZLE_SIZE-1] and move puzzle n times
+    return (number_of_cycles(s1, s2)
+          + manhattan_dist(s1_idx, s2_idx, N))%2
 
-    Returns:
-        init_state: moved state
-    """
-
-    N = int(input("How big is your puzzle? : "))
-    k = int(input("How many times shake puzzle? : "))
-
-    init_idx = list(range(N**2))
-    for i in range(k):
-        pos = init_idx.index(0)
-        new_pos = random.choice([p for p, _ in State.next_pos(N, pos)])
-        init_idx[pos], init_idx[new_pos] = init_idx[new_pos], init_idx[pos]
-
-    init_state = State(N, tuple(init_idx))
-    return init_state
-
-def make_puzzle_parity(N):
-    init_idx = list(range(N**2))
-    answer_idx = init_idx[:]
-
+def make_puzzle(N):
+    answer_idx = [str(x) for x in range(1, N**2)]+['X']
+    init_idx = answer_idx[:]
     random.shuffle(init_idx)
-    init_state = State(N, tuple(init_idx))
-    answer_state = State(N, tuple(answer_idx))
 
-    if total_parity(init_state, answer_state):
-        if init_idx.index(0) in [0, 1]:
+    if total_parity(init_idx, answer_idx) != (N**2)%2:
+        if init_idx.index('X') in [0, 1]:
             init_idx[2], init_idx[3] = init_idx[3], init_idx[2]
         else:
             init_idx[0], init_idx[1] = init_idx[1], init_idx[0]
+    init_state = State(N, tuple(init_idx))
+    return init_state
 
-        init_state = State(N, tuple(init_idx))
+def make_puzzle_shake(N, k):
+    """Get the number of shakes from keyboard.
+
+    Move puzzle at state [0,1,...,PUZZLE_SIZE-1] and move puzzle n times
+    Returns:
+        init_state: moved state
+    """
+    init_idx =[str(x) for x in range(1, N**2)]+['X']
+    for i in range(k):
+        pos = init_idx.index('X')
+        new_pos = random.choice([p for p, _ in State.next_pos(N, pos)])
+        init_idx[pos], init_idx[new_pos] = init_idx[new_pos], init_idx[pos]
+    init_state = State(N, tuple(init_idx))
     return init_state
 
 if __name__ == "__main__":
-    #print(parity_of_permutation(State(2, (0,3,2,1)),State(2, (0,3,2,1))))
-    #print(total_manhattan_dist(State(2, (1,3,2,0)),State(2, (3,2,1,0))))
-    N = 2
-    print(total_parity(make_puzzle_parity(N), State(N, tuple(range(N**2)))))
+    s = make_puzzle(4)
+    State.print_state(s.index)

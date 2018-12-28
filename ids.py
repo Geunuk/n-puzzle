@@ -1,5 +1,6 @@
 import sys
 import math
+
 import npuzzle
 
 def dls(init_state, depth):
@@ -40,11 +41,29 @@ def ids(init_state):
         print("FAILED: failed")
 
 if __name__ == '__main__':
-    init_state = npuzzle.make_puzzle()
-    print("Init   :", init_state.index)
-    print("Answer :", init_state.answer)
+    init_state = npuzzle.make_puzzle(2)
+    print("Init    :")
+    npuzzle.State.print_state(init_state.index)
+    print()
 
     time, route = ids(init_state)
-    print("Time:", time)
-    print("Length:", len(route))
-    print("Route:", route)
+    print("Changed :")
+    npuzzle.State.print_state(init_state.answer)
+    print()
+
+    print("Time    :", time)
+    print("Length  :", len(route))
+    print("Route   :")
+    print()
+
+    print("   |  0  1  2  3  4  5  6  7  8  9 ")
+    print("-----------------------------------")
+    for i, r in enumerate(route):
+        if i%10 == 0:
+            print('{:2} | '.format(i), end=' ')
+        print(r, end='  ')
+
+        if i%10 == 9:
+            print()
+    print()
+
