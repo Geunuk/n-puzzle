@@ -55,3 +55,6 @@ $python3 main.py -c -r [size]
 ```
 $python3 main.py -c -r [size] -s [count]
 ```
+
+## Solvability of n-puzzle
+For solvability of n-puzzle, please look https://geunuk.wordpress.com/2018/12/25/n-puzzle/
