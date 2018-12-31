@@ -61,6 +61,7 @@ class State():
             print(line)
         print(' --'*N + ' ')
 
+
 def manhattan_dist(i1, i2, N):
     a, b = i1//N, i1%N
     c, d = i2//N, i2%N
@@ -75,6 +76,7 @@ def total_manhattan_dist(s1, s2):
             s2_idx = s2.index.index(s1_val)
             result += manhattan_dist(s1_idx, s2_idx, s1.N)
     return result
+
 
 def make_pair(x):
     result = []
@@ -108,6 +110,7 @@ def linear_conflict(s1, s2):
     col_conflict = linear_conflict_line(cols1, cols2)
 
     return row_conflict + col_conflict
+
 
 def number_of_cycles(s1, s2):
     s1 = s1
@@ -159,12 +162,6 @@ def make_puzzle(N):
     return init_state
 
 def make_puzzle_shake(N, k):
-    """Get the number of shakes from keyboard.
-
-    Move puzzle at state [0,1,...,PUZZLE_SIZE-1] and move puzzle n times
-    Returns:
-        init_state: moved state
-    """
     init_idx =[str(x) for x in range(1, N**2)]+['X']
     for i in range(k):
         pos = init_idx.index('X')

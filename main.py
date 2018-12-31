@@ -2,12 +2,9 @@ import argparse
 import sys
 
 from npuzzle import *
-from astar import astar
-from bfs import bfs
-from dfs import dfs
-from ids import ids
+from algorithm import astar, gbfs, bfs, dfs, ids
 
-fun_dic = {"astar" : astar, "bfs" : bfs, "dfs" : dfs, "ids" : ids}
+fun_dic = {"astar":astar, "gbfs":gbfs, "bfs":bfs, "dfs":dfs, "ids":ids}
 
 def handle_args():
     state, fun = None, None
