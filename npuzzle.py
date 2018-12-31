@@ -76,6 +76,39 @@ def total_manhattan_dist(s1, s2):
             result += manhattan_dist(s1_idx, s2_idx, s1.N)
     return result
 
+def make_pair(x):
+    result = []
+    for i in range(len(x)-1):
+        for j in range(i+1, len(x)):
+            result.append((x[i], x[j]))
+    return result
+
+def linear_conflict_line(line1, line2):
+    result = 0
+    for x, y in zip(line1, line2):
+        overlap = set(x).intersection(set(y))
+        overlap = overlap.difference(set(['X']))
+        pairs = make_pair(list(overlap))
+        for m, n in pairs:
+            diff1 = x.index(m) - x.index(n)
+            diff2 = y.index(m) - y.index(n)
+            if diff1*diff2 < 0:
+                result += 1
+    return result
+
+def linear_conflict(s1, s2):
+    N = int(len(s1)**0.5)
+    rows1 = [tuple(s1[i*N:(i+1)*N]) for i in range(N)]
+    rows2 = [tuple(s2[i*N:(i+1)*N]) for i in range(N)]
+
+    cols1 = tuple(zip(*rows1))
+    cols2 = tuple(zip(*rows2))
+
+    row_conflict = linear_conflict_line(rows1, rows2)
+    col_conflict = linear_conflict_line(cols1, cols2)
+
+    return row_conflict + col_conflict
+
 def number_of_cycles(s1, s2):
     s1 = s1
     s2 = s2

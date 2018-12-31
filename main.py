@@ -20,7 +20,7 @@ def handle_args():
     group1.add_argument('-i', '--input', type=str)
     group1.add_argument('-r', '--random', nargs='?', type=int, const=4)
     
-    group2 = parser.add_mutually_exclusive_group(required=True)
+    group2 = parser.add_mutually_exclusive_group()
     group2.add_argument('-a', '--algorithm', type=str)
     group2.add_argument('-c', '--compare', action='store_true')
    
@@ -42,9 +42,9 @@ def handle_args():
             sys.exit(-1)
 
         if args.shake:
-            state = make_puzzle(N)
-        else:
             state = make_puzzle_shake(N, args.shake)
+        else:
+            state = make_puzzle(N)
 
         with open(args.make[0], 'wt') as f:
             for x in state.index:

@@ -18,7 +18,8 @@ def astar_body(init_state, g):
         h : heuristic function(MD+ED/MD-1)
         """           
         answer_state = npuzzle.State(node.N, node.answer)
-        h = npuzzle.total_manhattan_dist(node, answer_state)
+        h = npuzzle.total_manhattan_dist(node, answer_state) +\
+            2*npuzzle.linear_conflict(node.index,node.answer)
         return g(node) + h
     
     explored = set()
