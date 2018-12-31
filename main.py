@@ -10,16 +10,16 @@ def handle_args():
     state, fun = None, None
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-s', '--shake', type=int)
+    parser.add_argument('-s', '--shake', metavar="count", type=int, help="set shake count")
 
     group1 = parser.add_mutually_exclusive_group(required=True)
-    group1.add_argument('-m', '--make', nargs=2)
-    group1.add_argument('-i', '--input', type=str)
-    group1.add_argument('-r', '--random', nargs='?', type=int, const=4)
+    group1.add_argument('-m', '--make', metavar=("filename", "size"), nargs=2, help="make input index file")
+    group1.add_argument('-i', '--input', metavar='filename', type=str, help="choose input index file")
+    group1.add_argument('-r', '--random', metavar="size", nargs='?', type=int, const=4, help="make random index")
     
     group2 = parser.add_mutually_exclusive_group()
-    group2.add_argument('-a', '--algorithm', type=str)
-    group2.add_argument('-c', '--compare', action='store_true')
+    group2.add_argument('-a','--algorithm',metavar='alg',type=str, help="choose algorithm betwen astar, gbfs, bfs, dfs or ids")
+    group2.add_argument('-c', '--compare', action='store_true', help="compare all algorithms")
    
     args = parser.parse_args()
     
@@ -70,6 +70,21 @@ def handle_args():
         else:
             parser.error("-a option must be 'astar', 'bfs', 'dfs', or 'ids'. Yours = '{}'".format(alg_name))
         return args, state, fun
+
+
+def spinning_cursor():
+    while True:
+        for cursor in '|/-\\':
+            yield cursor
+
+def print_waiting_msg():
+    print("Waiting... ", end='')
+    while True:
+        sys.stdout.write(next(spinner))
+        sys.stdout.flush()
+        time.sleep(0.1)
+        sys.stdout.write('\b')
+
 
 def run(init_state, fun):
     print("Init :")
