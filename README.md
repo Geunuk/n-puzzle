@@ -57,4 +57,5 @@ $python3 main.py -c -r [size] -s [count]
 ```
 
 ## Solvability of n-puzzle
-For solvability of n-puzzle, please look https://geunuk.wordpress.com/2018/12/25/n-puzzle/
+*For linear conflict heuristic, look https://algorithmsinsight.wordpress.com/graph-theory-2/a-star-in-general/implementing-a-star-to-solve-n-puzzle/
+*For solvability of n-puzzle, please look https://geunuk.wordpress.com/2018/12/25/n-puzzle/
