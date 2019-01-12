@@ -1,5 +1,7 @@
 import argparse
 import sys
+import time
+import multiprocessing
 
 from npuzzle import *
 from algorithm import astar, gbfs, bfs, dfs, ids
@@ -77,13 +79,15 @@ def spinning_cursor():
         for cursor in '|/-\\':
             yield cursor
 
-def print_waiting_msg():
-    print("Waiting... ", end='')
-    while True:
+def print_waiting_msg(jobs):
+    spinner = spinning_cursor()
+    print("Calculating...... ", end='')
+    while any([p.is_alive() for p in jobs]):
         sys.stdout.write(next(spinner))
         sys.stdout.flush()
         time.sleep(0.1)
         sys.stdout.write('\b')
+    print("\n")
 
 
 def run(init_state, fun):
@@ -91,7 +95,15 @@ def run(init_state, fun):
     State.print_state(init_state.index)
     print()
 
-    time, route = fun(init_state)
+    manager = multiprocessing.Manager()
+    return_list = manager.list()
+
+    p = multiprocessing.Process(target=fun, args=(init_state, return_list))
+    p.start()
+    print_waiting_msg([p])
+
+    time, route = return_list
+
     print("Changed :")
     State.print_state(init_state.answer)
     print()
@@ -121,10 +133,10 @@ def compare(init_state):
     length_list = []
 
     for fun in fun_dic.values():
-        time, route = fun(init_state)
+        time, route = fun(init_state, [])
         time_list.append(str(time))
         length_list.append(str(len(route)))
-
+   
     fun_list = ["{:^5}".format(x) for x in fun_dic.keys()]
     time_list = ["{:^5}".format(x) for x in time_list]
     length_list = ["{:^5}".format(x) for x in length_list]

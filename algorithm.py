@@ -5,11 +5,15 @@ from collections import deque
 
 import npuzzle
 
-def gbfs(init_state):
-    return astar_body(init_state, lambda node : 0)
+def gbfs(init_state, result_list):
+    time, route = astar_body(init_state, lambda node : 0)
+    result_list += [time, route]
+    return time, route
 
-def astar(init_state):
-    return astar_body(init_state, lambda node : node.depth)
+def astar(init_state, result_list):
+    time, route = astar_body(init_state, lambda node : node.depth)
+    result_list += [time, route]
+    return time, route
 
 def astar_body(init_state, g):
     """A* algorithm. Return explored indices and goal index."""
@@ -55,8 +59,9 @@ def find_value(h, state):
     return None
 
 
-def bfs(init_state):
+def bfs(init_state, result_list):
     if init_state.goal_test():
+        result_list += [0, []]
         return 0, []
 
     explored = set()
@@ -70,7 +75,10 @@ def bfs(init_state):
             if new_state.index not in explored and new_state not in d:
                 # Goal test
                 if new_state.goal_test():
-                    return len(explored), new_state.backtrace()
+                    time = len(explored)
+                    route = new_state.backtrace()
+                    result_list += [time, route]
+                    return time, route
                 else:
                     d.appendleft(new_state)
     else:
@@ -78,7 +86,7 @@ def bfs(init_state):
         sys.exit(-1)
 
 
-def dfs(init_state):
+def dfs(init_state, result_list):
     explored = set()
     s = [init_state]
 
@@ -88,7 +96,10 @@ def dfs(init_state):
 
         # Goal test
         if node.goal_test():
-            return len(explored), node.backtrace()
+            time = len(explored)
+            route = node.backtrace()
+            result_list += [time, route]
+            return time, route
 
         for new_state in node.next_state():
             if new_state.index not in explored and new_state not in s:
@@ -121,14 +132,15 @@ def dls(init_state, depth):
     else:
         return len(explored), 'C'
 
-def ids(init_state):
+def ids(init_state, result_list):
     """Iteration version iterative-deepening search."""
     time = 0
     for depth in range(math.factorial(init_state.puzzle_size)//2):
-        depth_time, result = dls(init_state, depth)
+        depth_time, route = dls(init_state, depth)
         time += depth_time
-        if result != ('C' or 'F'):
-            return time, result
+        if route != ('C' or 'F'):
+            result_list += [time, route]
+            return time, route
 
     if result == 'C':
         print("FAILED: cutoff")
@@ -142,7 +154,7 @@ if __name__ == '__main__':
     npuzzle.State.print_state(init_state.index)
     print()
 
-    time, route = astar(init_state)
+    time, route = astar(init_state, [])
     print("Changed :")
     npuzzle.State.print_state(init_state.answer)
     print()
