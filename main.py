@@ -147,15 +147,6 @@ def compare(init_state):
         time_list.append(str(time))
         length_list.append(str(len(route)))
 
-    """
-    time_list = []
-    length_list = []
-
-    for fun in fun_dic.values():
-        time, route = fun(init_state, [])
-        time_list.append(str(time))
-        length_list.append(str(len(route)))
-   """
     fun_list = ["{:^5}".format(x) for x in fun_dic.keys()]
     time_list = ["{:^5}".format(x) for x in time_list]
     length_list = ["{:^5}".format(x) for x in length_list]
