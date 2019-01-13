@@ -96,13 +96,13 @@ def run(init_state, fun):
     print()
 
     manager = multiprocessing.Manager()
-    return_list = manager.list()
+    return_dict = manager.dict()
 
-    p = multiprocessing.Process(target=fun, args=(init_state, return_list))
+    p = multiprocessing.Process(target=fun, args=(init_state, return_dict))
     p.start()
     print_waiting_msg([p])
 
-    time, route = return_list
+    time, route = return_dict.values()[0]
 
     print("Changed :")
     State.print_state(init_state.answer)
@@ -129,6 +129,25 @@ def compare(init_state):
     State.print_state(init_state.index)
     print()
 
+    manager = multiprocessing.Manager()
+    return_dict = manager.dict()
+
+    jobs = []
+    for fun in fun_dic.values():
+        p = multiprocessing.Process(target=fun, args=(init_state, return_dict))
+        jobs.append(p)
+        p.start()
+
+    print_waiting_msg(jobs)
+
+    time_list = []
+    length_list = []
+    for name in fun_dic.keys():
+        time, route = return_dict[name]
+        time_list.append(str(time))
+        length_list.append(str(len(route)))
+
+    """
     time_list = []
     length_list = []
 
@@ -136,7 +155,7 @@ def compare(init_state):
         time, route = fun(init_state, [])
         time_list.append(str(time))
         length_list.append(str(len(route)))
-   
+   """
     fun_list = ["{:^5}".format(x) for x in fun_dic.keys()]
     time_list = ["{:^5}".format(x) for x in time_list]
     length_list = ["{:^5}".format(x) for x in length_list]
